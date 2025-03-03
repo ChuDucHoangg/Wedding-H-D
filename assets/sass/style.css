@@ -2361,7 +2361,7 @@ a.ui-button:active,
 
 @media (max-width: 991px) {
     .navbar-header .navbar-brand img {
-        max-width: 150px;
+        max-width: 30px;
     }
 }
 

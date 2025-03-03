@@ -474,6 +474,9 @@
             .on("click", function (e) {
                 e.stopPropagation();
             });
+        $(".language-option").on("click", function () {
+            searchContent.removeClass("header-search-content-toggle");
+        });
     }
 
     /*------------------------------------------
@@ -809,19 +812,57 @@
         = COUNTDOWN CLOCK
     -------------------------------------------*/
     if ($("#clock").length) {
+        let currentLang = localStorage.getItem("selectedLang") || "vi"; // Lấy ngôn ngữ từ localStorage (mặc định là tiếng Việt)
+
+        const translations = {
+            vi: { days: "Ngày", hours: "Giờ", minutes: "Phút", seconds: "Giây" },
+            kr: { days: "일", hours: "시간", minutes: "분", seconds: "초" },
+            en: { days: "Days", hours: "Hours", minutes: "Minutes", seconds: "Seconds" },
+        };
+
+        function updateCountdownLabels() {
+            document.getElementById("countdown-days").textContent = translations[currentLang].days;
+            document.getElementById("countdown-hours").textContent = translations[currentLang].hours;
+            document.getElementById("countdown-minutes").textContent = translations[currentLang].minutes;
+            document.getElementById("countdown-seconds").textContent = translations[currentLang].seconds;
+        }
+
         $("#clock").countdown("2025-03-15 00:00:00", function (event) {
             var $this = $(this).html(
                 event.strftime(
                     "" +
-                        // + '<div class="box"><div><div class="time">%m</div> <span>Month</span> </div></div>'
-                        '<div class="box"><div><div class="time">%D</div> <span>Days</span> </div></div>' +
-                        '<div class="box"><div><div class="time">%H</div> <span>Hours</span> </div></div>' +
-                        '<div class="box"><div><div class="time">%M</div> <span>Mins</span> </div></div>' +
-                        '<div class="box"><div><div class="time">%S</div> <span>Secs</span> </div></div>'
+                        '<div class="box"><div><div class="time">%D</div> <span id="countdown-days"></span> </div></div>' +
+                        '<div class="box"><div><div class="time">%H</div> <span id="countdown-hours"></span> </div></div>' +
+                        '<div class="box"><div><div class="time">%M</div> <span id="countdown-minutes"></span> </div></div>' +
+                        '<div class="box"><div><div class="time">%S</div> <span id="countdown-seconds"></span> </div></div>'
                 )
             );
+            updateCountdownLabels(); // Cập nhật lại nhãn mỗi khi đồng hồ thay đổi
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".language-option").forEach((option) => {
+                option.addEventListener("click", function () {
+                    const langText = this.querySelector("span").textContent;
+
+                    if (langText === "Tiếng Hàn") {
+                        currentLang = "kr";
+                    } else if (langText === "Tiếng Anh") {
+                        currentLang = "en";
+                    } else {
+                        currentLang = "vi";
+                    }
+
+                    localStorage.setItem("selectedLang", currentLang); // Lưu lại ngôn ngữ đã chọn
+                    updateCountdownLabels(); // Cập nhật lại nhãn khi đổi ngôn ngữ
+                });
+            });
+
+            // Cập nhật lần đầu khi trang tải
+            updateCountdownLabels();
         });
     }
+
     /*------------------------------------------
         = COUNTDOWN CLOCK
     -------------------------------------------*/
